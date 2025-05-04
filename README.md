@@ -49,13 +49,13 @@ Editar
 
 ### 1. Clonar el repositorio
 
-# bash
+#### bash
 git clone https://github.com/tu-usuario/skyway.git
 cd skyway
 
 ### 2. Crear y configurar el entorno virtual
  - Usar entorno Conda (Es como lo tengo yo boba)
-    # bash
+    ### bash
     conda create -n skyway python=3.11
     conda activate skyway
     pip install -r requirements.txt
@@ -68,35 +68,36 @@ AMADEUS_CLIENT_ID=tu_id
 AMADEUS_CLIENT_SECRET=tu_secret
 MONGODB_URI=tu_uri_mongodb
 GEMINI_API_KEY=tu_clave_gemini
+
 ---
 
-# 🧠 Flujo de funcionamiento
+## 🧠 Flujo de funcionamiento
 
-# El usuari decide si sabe a donde quiere ir
-# El usuario ingresa destino, fechas, duración y cantidad de personas etc...
-# Se llama a generador.py (servicio) que conecta con Gemini AI para generar un plan.
-# Se conecta con la API de Amadeus para obtener vuelos.(mas adelantes hoteles y coche)
-# Se guardan resultados en MongoDB.
-# Se generan archivos:
-# output/resultados_vuelos.json: datos estructurados.
-# output/resultados_vuelos.html: vista renderizada con plantilla Jinja2.
+### El usuari decide si sabe a donde quiere ir
+### El usuario ingresa destino, fechas, duración y cantidad de personas etc...
+### Se llama a generador.py (servicio) que conecta con Gemini AI para generar un plan.
+### Se conecta con la API de Amadeus para obtener vuelos.(mas adelantes hoteles y coche)
+### Se guardan resultados en MongoDB.
+### Se generan archivos:
+### output/resultados_vuelos.json: datos estructurados.
+### output/resultados_vuelos.html: vista renderizada con plantilla Jinja2.
 
-# 📦 Generar resultados manualmente
+## 📦 Generar resultados manualmente
 - Desde app.py, puedes correr el generador con datos simulados o reales.
 
-# bash
+### bash
 python app.py
 
-## Elga pedazo de boba ##
+# Elga pedazo de boba #
 
-# ✅ Pendientes / Ideas futuras
+### ✅ Pendientes / Ideas futuras
+
 - Añadir hoteles y actividades con API de Amadeus.
-
-# Interfaz web con Flask.
-# Selección de viajes favoritos.
-# Descarga de PDF del itinerario.
-# Autenticación de usuarios.
-# Busqueda de por imagen
+-  Interfaz web con Flask.
+-  Selección de viajes favoritos.
+-  Descarga de PDF del itinerario.
+-  Autenticación de usuarios.
+-  Busqueda de por imagen
 
 ### Recursos
 - Amadeus for Developers
