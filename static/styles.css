@@ -1,3 +1,8 @@
 *{
- background-color: rgb(139, 194, 245)  ;   
+ background-color: rgb(139, 194, 245)  ; 
+ font-family: Arial, Helvetica, sans-serif;  
+}
+
+.body{
+    margin: 50px;
 }

@@ -20,16 +20,15 @@ if __name__ == "__main__":
 
     if respuesta in ["no", "n"]:
         # Recoger parámetros para guía sin destino específico
+        desde = input("📍 ¿Desde dónde sales?: ")
         epoca = input("🌄 ¿En qué época quieres viajar?: ")
         lugar = input("🌍 ¿Qué tipo de lugar te gustaría visitar (playa, ciudad, naturaleza, etc.)?: ")
-        desde = input("📍 ¿Desde dónde sales?: ")
         cuando = input("📆 ¿Sabes cuanto tiempo quieres quedarte?: ")
         
-
         if cuando in ["si", "s"]:
             fecha = input("📆 ¿Que fecha, desde cuando hasta cuando tienes pensado?")
         else:
-            fecha = input("📆 ¿que epoca mas o menos te interesaria ir?")
+            fecha = input("📆 ¿que epoca o dias te interesaria ir? (por defecto 5 dias)")
         # duracion = input("📅 ¿Cuántos días disponibles tienes?: ")
         personas = input("👥 ¿Cuántas personas viajan?: ")
         continente = input("🌎 ¿Quieres filtrar por continente? (deja vacío si no): ")
@@ -37,7 +36,7 @@ if __name__ == "__main__":
 
         # Generar las 3 guías en un solo texto
         texto_guia = generar_guia_sin_direccion(
-            epoca, lugar, desde, fecha, personas, continente, pais
+            desde, epoca, lugar, fecha, personas, continente, pais
         )
         print("\n📝 Guías generadas (3 opciones):\n")
         print(texto_guia)
@@ -63,6 +62,7 @@ if __name__ == "__main__":
 
     else:
         # Recoger parámetros para destino específico
+        desde = input("📍 ¿Desde dónde sales?: ")
         destino = input("🌍 ¿A qué lugar quieres viajar?: ")
         dias = input("📅 ¿Cuántos días durará el viaje?: ")
         fecha = input("📆 ¿En qué fecha?: ")
