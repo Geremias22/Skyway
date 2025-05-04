@@ -1,0 +1,17 @@
+# Bytecode de Python
+__pycache__/
+*.py[cod]
+
+# Archivos de configuración/credenciales sensibles
+.env
+
+# Archivos generados
+*.log
+*.sqlite3
+*.db
+
+# Salidas generadas
+/output/
+
+# Salidas HTML temporales si se generan automáticamente
+# /templates/resultados_vuelos.html

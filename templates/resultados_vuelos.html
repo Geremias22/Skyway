@@ -1,0 +1,31 @@
+<!-- templates/resultados_vuelos.html -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Vuelos a {{ destino }}</title>
+    <link rel="stylesheet" href="../static/styles.css">
+</head>
+<body>
+    <h1>🛫 Resultados de vuelos de {{ origen }} a {{ destino }}</h1>
+    <ul>
+        {% for vuelo in vuelos %}
+        <li>
+            <strong>{{ vuelo.salida }} → {{ vuelo.llegada }}</strong><br>
+            Salida: {{ vuelo.hora_salida }} — Llegada: {{ vuelo.hora_llegada }}<br>
+            Vuelo: {{ vuelo.numero_vuelo }}<br>
+            Avión: {{ vuelo.avion }}<br>
+            Precio: {{ vuelo.precio }} EUR<br>
+            Duración: {{ vuelo.duracion }}<br>
+            <button onclick="document.getElementById('vuelo{{ loop.index }}').style.display='block'">Más detalles</button>
+            <div id="vuelo{{ loop.index }}" style="display:none; margin-top:10px">
+                <p>{{ vuelo.detalle_tarifa }}</p>
+                <p>Equipaje: {{ vuelo.equip_mano }} de mano, {{ vuelo.equip_fact }} facturado</p>
+                <p>Servicios incluidos: {{ vuelo.lista_amenities }}</p>
+                <a href="{{ vuelo.checkin_url }}" target="_blank">Check-in online</a>
+            </div>
+        </li><br>
+        {% endfor %}
+    </ul>
+</body>
+</html>

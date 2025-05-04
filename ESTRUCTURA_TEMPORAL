@@ -1,0 +1,13 @@
+skyway/
+├── core/                # scripts principales (antes scripts/)
+│   └── generador_vuelos.py
+├── services/            # servicios (Gemini, Amadeus, etc.)
+│   └── generador.py
+├── static/              # CSS, imágenes, JS
+│   └── styles.css
+├── templates/           # plantillas HTML (Jinja2)
+│   └── resultados_vuelos.html
+├── output/              # archivos generados automáticamente
+│   ├── resultados_vuelos.json
+│   └── resultados_vuelos.html
+├── .env
