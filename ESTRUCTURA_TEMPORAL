@@ -1,13 +1,30 @@
-skyway/
-├── core/                # scripts principales (antes scripts/)
-│   └── generador_vuelos.py
-├── services/            # servicios (Gemini, Amadeus, etc.)
-│   └── generador.py
-├── static/              # CSS, imágenes, JS
-│   └── styles.css
-├── templates/           # plantillas HTML (Jinja2)
-│   └── resultados_vuelos.html
-├── output/              # archivos generados automáticamente
-│   ├── resultados_vuelos.json
-│   └── resultados_vuelos.html
-├── .env
+## 🗂️ Estructura del Proyecto
+
+SKYWAY/
+│
+├── controllers/ # Controladores principales (búsqueda de vuelos, etc.)
+│ └── generador_vuelos.py
+│
+├── services/ # Servicios auxiliares (auth, almacenamiento, API Gemini)
+│ ├── auth.py
+│ └── generador.py
+│
+├── templates/ # Plantillas HTML para renderizado con Jinja2
+│ └── resultados_vuelos.html
+│
+├── static/ # Recursos estáticos (CSS, imágenes)
+│ ├── styles.css
+│ └── img/
+│ ├── LogoSkyway.png
+│ └── Skyway.png
+│
+├── data/ # Datos de entrada o configuraciones temporales
+│
+├── output/ # Resultados generados (JSON y HTML)
+│ ├── resultados_vuelos.json
+│ └── resultados_vuelos.html
+│
+├── .env # Variables de entorno (NO INCLUIDO en el repo)
+├── app.py # Punto de entrada del proyecto
+├── db.py # Conexión con MongoDB Atlas
+└── README.md # Documentación del proyecto
