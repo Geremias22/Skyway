@@ -1,5 +1,7 @@
 from flask import Flask, render_template, request
 from controllers.generador_vuelos import buscar_vuelos
+from controllers.generador_hoteles import buscar_hoteles
+print("✅ buscar_hoteles importado correctamente")
 
 app = Flask(__name__)
 
@@ -19,6 +21,17 @@ def procesar_busqueda():
     num_personas = request.form.get('days')
     fecha = request.form.get('date')
     print(lugar, num_personas, fecha)
+
+
+@app.route('/hoteles')
+def ruta_hoteles():
+    hoteles = buscar_hoteles()
+    return render_template('resultados_hoteles.html', hoteles=hoteles)
+
+@app.route('/actividades')
+def ruta_actividades():
+    actividades = buscar_actividades()
+    return render_template('resultados_actividades.html', actividades=actividades)
     
 if __name__ == "__main__":
     app.run(debug=True)

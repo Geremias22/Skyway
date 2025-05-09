@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>🏨 Resultados de Hoteles</title>
+    <link rel="stylesheet" href="../static/styles.css">
+</head>
+<body>
+    <h1>🏨 Resultados de hoteles</h1>
+    <ul>
+    {% for hotel in hoteles %}
+        <li>
+            <strong>{{ hotel.nombre }}</strong><br>
+            Dirección: {{ hotel.direccion }}, {{ hotel.ciudad }}<br>
+            Estrellas: {{ hotel.estrellas }}<br>
+            Precio: {{ hotel.precio }} {{ hotel.moneda }}<br>
+            Tipo de habitación: {{ hotel.tipo_habitacion }}<br>
+            Camas: {{ hotel.camas }}<br>
+            Descripción: {{ hotel.descripcion or 'Sin descripción' }}<br>
+            <button onclick="document.getElementById('hotel{{ loop.index }}').style.display='block'">Más detalles</button>
+            <div id="hotel{{ loop.index }}" style="display:none; margin-top:10px">
+                <p>Amenities: {{ hotel.amenities | join(', ') }}</p>
+                <p>Check-in: {{ hotel.checkin }} — Check-out: {{ hotel.checkout }}</p>
+            </div>
+        </li><br>
+    {% endfor %}
+    </ul>
+</body>
+</html>

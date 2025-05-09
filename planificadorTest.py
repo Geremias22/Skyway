@@ -2,7 +2,7 @@ import os
 from dotenv import load_dotenv
 import google.generativeai as genai
 from services.generador import (
-    generar_destinos_sin_direccion,
+    # generar_destinos_sin_direccion,
     generar_itinerario_con_direccion,
     generar_guia_sin_direccion
 )
@@ -26,9 +26,9 @@ if __name__ == "__main__":
         cuando = input("📆 ¿Sabes cuanto tiempo quieres quedarte?: ")
         
         if cuando in ["si", "s"]:
-            fecha = input("📆 ¿Que fecha, desde cuando hasta cuando tienes pensado?")
+            fecha = input("📆 ¿Que fecha, desde cuando hasta cuando tienes pensado?: ")
         else:
-            fecha = input("📆 ¿que epoca o dias te interesaria ir? (por defecto 5 dias)")
+            fecha = input("📆 ¿que epoca o dias te interesaria ir? (por defecto 5 dias): ")
         # duracion = input("📅 ¿Cuántos días disponibles tienes?: ")
         personas = input("👥 ¿Cuántas personas viajan?: ")
         continente = input("🌎 ¿Quieres filtrar por continente? (deja vacío si no): ")

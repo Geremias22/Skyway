@@ -178,9 +178,9 @@ def buscar_vuelos():
     try:
         respuesta = amadeus.shopping.flight_offers_search.get(
             originLocationCode="MAD",
-            destinationLocationCode="BCN",
-            departureDate="2025-05-10",
-            adults=3
+            destinationLocationCode="VLC",
+            departureDate="2025-08-18",
+            adults=5
         )
         vuelos = respuesta.data[:10]
         print(f"✈️ Se encontraron {len(vuelos)} vuelos.")
@@ -197,6 +197,8 @@ def procesar_vuelos(flights):
         segment = vuelo['itineraries'][0]['segments'][0]
         salida = segment['departure']['iataCode']
         llegada = segment['arrival']['iataCode']
+        # if llegada['arrival']['iataCode'] != "FRA":
+        #     continue
         hora_salida = segment['departure']['at'][11:16]
         hora_llegada = segment['arrival']['at'][11:16]
         fecha_salida = segment['departure']['at'][:10]
@@ -241,3 +243,68 @@ def procesar_vuelos(flights):
             "checkin_url": checkin_url
         })
     return vuelos_procesados
+
+
+
+
+
+
+## Buscar vuelos y que sean directos:
+# def procesar_vuelos(flights):
+#     vuelos_procesados = []
+#     for vuelo in flights:
+#         segmentos = vuelo['itineraries'][0]['segments']
+#         segment_inicio = segmentos[0]
+#         segment_fin = segmentos[-1]
+
+#         # ❗ Solo procesar si el destino final es VLC
+#         if segment_fin['arrival']['iataCode'] != "VLC":
+#             continue
+
+#         salida = segment_inicio['departure']['iataCode']
+#         llegada = segment_fin['arrival']['iataCode']
+#         hora_salida = segment_inicio['departure']['at'][11:16]
+#         hora_llegada = segment_fin['arrival']['at'][11:16]
+#         fecha_salida = segment_inicio['departure']['at'][:10]
+#         fecha_llegada = segment_fin['arrival']['at'][:10]
+#         precio = vuelo['price']['total']
+#         duracion = formatear_duracion(vuelo['itineraries'][0]['duration'])
+#         aerolinea = segment_inicio['carrierCode']
+#         avion_codigo = segment_inicio['aircraft']['code']
+#         avion = AIRCRAFTS.get(avion_codigo, avion_codigo)
+#         numero_vuelo = f"{aerolinea}{segment_inicio['number']}"
+
+#         traveler = vuelo['travelerPricings'][0]
+#         clase = traveler['fareDetailsBySegment'][0]['class']
+#         tarifa = traveler['fareDetailsBySegment'][0].get('brandedFareLabel', 'N/A')
+#         detalle_tarifa = formatear_tarifa_clase(
+#             traveler['fareDetailsBySegment'][0]['cabin'],
+#             tarifa,
+#             clase
+#         )
+#         equip_mano = traveler['fareDetailsBySegment'][0]['includedCabinBags'].get('quantity', 0)
+#         equip_fact = traveler['fareDetailsBySegment'][0]['includedCheckedBags'].get('quantity', 0)
+
+#         amenities = traveler['fareDetailsBySegment'][0].get('amenities', [])
+#         lista_amenities = ', '.join(a['description'] for a in amenities if not a['isChargeable']) or 'Ninguna incluida'
+#         checkin_url = CHECKIN_LINKS.get(aerolinea, "#")
+
+#         vuelos_procesados.append({
+#             "salida": salida,
+#             "llegada": llegada,
+#             "hora_salida": hora_salida,
+#             "hora_llegada": hora_llegada,
+#             "fecha_salida": fecha_salida,
+#             "fecha_llegada": fecha_llegada,
+#             "precio": precio,
+#             "duracion": duracion,
+#             "avion": avion,
+#             "numero_vuelo": numero_vuelo,
+#             "detalle_tarifa": detalle_tarifa,
+#             "equip_mano": equip_mano,
+#             "equip_fact": equip_fact,
+#             "lista_amenities": lista_amenities,
+#             "checkin_url": checkin_url
+#         })
+
+#     return vuelos_procesados
