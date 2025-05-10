@@ -38,74 +38,6 @@ CHECKIN_LINKS = {
     # Añade más según necesites
 }
 
-# def guardar_resultados(flights):
-#     with open("output/resultados_vuelos.json", "w", encoding="utf-8") as f_json:
-#         json.dump(flights, f_json, indent=2, ensure_ascii=False)
-
-#     with open("output/resultados_vuelos.html", "w", encoding="utf-8") as f_html:
-#         f_html.write("<!DOCTYPE html><html><head><title>Resultados de Vuelos</title></head><body>")
-#         # Obtener ciudad de llegada del primer vuelo para el titulo xd
-#         ciudad_destino = primer_segmento['arrival']['iataCode']
-
-#         f_html.write("<h1>🛫 Resultados de vuelos a {ciudad_destino}</h1><ul>")
-
-#         for i, vuelo in enumerate(flights, 1):
-
-#             # Recuperar variables para usarlo en el html
-#             segment = vuelo['itineraries'][0]['segments'][0]
-#             salida = segment['departure']['iataCode']
-#             llegada = segment['arrival']['iataCode']
-#             hora_salida = segment['departure']['at'][11:16]
-#             hora_llegada = segment['arrival']['at'][11:16]
-#             fecha_salida = segment['departure']['at'][:10]
-#             fecha_llegada = segment['arrival']['at'][:10]
-#             precio = vuelo['price']['total']
-#             duracion_no_legible = vuelo['itineraries'][0]['duration']
-#             duracion = formatear_duracion(duracion_no_legible)
-#             aerolinea = segment['carrierCode']
-#             avion_codigo = segment['aircraft']['code']
-#             avion = AIRCRAFTS.get(avion_codigo, avion_codigo)
-#             numero_vuelo = f"{aerolinea}{segment['number']}"
-
-#             traveler = vuelo['travelerPricings'][0]
-#             clase = traveler['fareDetailsBySegment'][0]['class']
-#             tarifa = traveler['fareDetailsBySegment'][0].get('brandedFareLabel', 'N/A')
-#             detalle_tarifa = formatear_tarifa_clase(
-#                 traveler['fareDetailsBySegment'][0]['cabin'],
-#                 tarifa,
-#                 clase
-#             )
-#             equip_mano = traveler['fareDetailsBySegment'][0]['includedCabinBags'].get('quantity', 0)
-#             equip_fact = traveler['fareDetailsBySegment'][0]['includedCheckedBags'].get('quantity', 0)
-
-#             amenities = traveler['fareDetailsBySegment'][0].get('amenities', [])
-#             lista_amenities = ', '.join(a['description'] for a in amenities if not a['isChargeable'])
-
-#             checkin_url = CHECKIN_LINKS.get(aerolinea, "#")
-
-#             f_html.write(f"""
-# <li>
-#   <strong>{salida} → {llegada}</strong> (Fecha: {fecha_salida} - {fecha_llegada})<br>
-#   Salida: {hora_salida} — Llegada: {hora_llegada}<br>
-#   Vuelo: {numero_vuelo} ({aerolinea})<br>
-#   Avión: {avion}<br>
-#   Precio(Aprox.): {precio} EUR<br>
-#   Duracion: {duracion} <br>
-#   <button onclick="document.getElementById('vuelo{i}').style.display='block'">Más detalles</button>
-#   <div id="vuelo{i}" style="display:none; margin-top:10px">
-#     <li>
-#         - {detalle_tarifa}
-#         - Equipaje: {equip_mano} de mano, {equip_fact} facturado
-#         - Servicios incluidos: {lista_amenities or 'Ninguna incluida'}
-#         - <a href="{checkin_url}" target="_blank">Check-in online</a>
-#     </li>
-#   </div>
-# </li><br>
-#             """)
-
-#         f_html.write("</ul></body></html>")
-
-
 
 
 def guardar_resultados(flights):
@@ -178,7 +110,7 @@ def buscar_vuelos():
     try:
         respuesta = amadeus.shopping.flight_offers_search.get(
             originLocationCode="MAD",
-            destinationLocationCode="VLC",
+            destinationLocationCode="FRA",
             departureDate="2025-08-18",
             adults=5
         )
@@ -194,21 +126,21 @@ def buscar_vuelos():
 def procesar_vuelos(flights):
     vuelos_procesados = []
     for vuelo in flights:
-        segment = vuelo['itineraries'][0]['segments'][0]
-        salida = segment['departure']['iataCode']
-        llegada = segment['arrival']['iataCode']
-        # if llegada['arrival']['iataCode'] != "FRA":
-        #     continue
-        hora_salida = segment['departure']['at'][11:16]
-        hora_llegada = segment['arrival']['at'][11:16]
-        fecha_salida = segment['departure']['at'][:10]
-        fecha_llegada = segment['arrival']['at'][:10]
-        precio = vuelo['price']['total']
-        duracion = formatear_duracion(vuelo['itineraries'][0]['duration'])
-        aerolinea = segment['carrierCode']
-        avion_codigo = segment['aircraft']['code']
-        avion = AIRCRAFTS.get(avion_codigo, avion_codigo)
-        numero_vuelo = f"{aerolinea}{segment['number']}"
+        segmentos_raw = vuelo['itineraries'][0]['segments']
+        segmentos = []
+        for seg in segmentos_raw:
+            segmento = {
+                "salida": seg['departure']['iataCode'],
+                "llegada": seg['arrival']['iataCode'],
+                "hora_salida": seg['departure']['at'][11:16],
+                "hora_llegada": seg['arrival']['at'][11:16],
+                "fecha_salida": seg['departure']['at'][:10],
+                "fecha_llegada": seg['arrival']['at'][:10],
+                "aerolinea": seg['carrierCode'],
+                "numero_vuelo": f"{seg['carrierCode']}{seg['number']}",
+                "avion": AIRCRAFTS.get(seg['aircraft']['code'], seg['aircraft']['code'])
+            }
+            segmentos.append(segmento)
 
         traveler = vuelo['travelerPricings'][0]
         clase = traveler['fareDetailsBySegment'][0]['class']
@@ -220,30 +152,29 @@ def procesar_vuelos(flights):
         )
         equip_mano = traveler['fareDetailsBySegment'][0]['includedCabinBags'].get('quantity', 0)
         equip_fact = traveler['fareDetailsBySegment'][0]['includedCheckedBags'].get('quantity', 0)
-
         amenities = traveler['fareDetailsBySegment'][0].get('amenities', [])
         lista_amenities = ', '.join(a['description'] for a in amenities if not a['isChargeable']) or 'Ninguna incluida'
-        checkin_url = CHECKIN_LINKS.get(aerolinea, "#")
+
+        checkin_url = CHECKIN_LINKS.get(segmentos[0]["aerolinea"], "#")
 
         vuelos_procesados.append({
-            "salida": salida,
-            "llegada": llegada,
-            "hora_salida": hora_salida,
-            "hora_llegada": hora_llegada,
-            "fecha_salida": fecha_salida,
-            "fecha_llegada": fecha_llegada,
-            "precio": precio,
-            "duracion": duracion,
-            "avion": avion,
-            "numero_vuelo": numero_vuelo,
+            "salida": segmentos[0]['salida'],
+            "llegada": segmentos[-1]['llegada'],
+            "fecha_salida": segmentos[0]['fecha_salida'],
+            "fecha_llegada": segmentos[-1]['fecha_llegada'],
+            "hora_salida": segmentos[0]['hora_salida'],
+            "hora_llegada": segmentos[-1]['hora_llegada'],
+            "duracion": formatear_duracion(vuelo['itineraries'][0]['duration']),
+            "precio": vuelo['price']['total'],
             "detalle_tarifa": detalle_tarifa,
             "equip_mano": equip_mano,
             "equip_fact": equip_fact,
             "lista_amenities": lista_amenities,
-            "checkin_url": checkin_url
+            "checkin_url": checkin_url,
+            "segmentos": segmentos
         })
-    return vuelos_procesados
 
+    return vuelos_procesados
 
 
 

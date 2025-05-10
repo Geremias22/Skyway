@@ -13,16 +13,24 @@
         <li>
             <strong>{{ vuelo.salida }} → {{ vuelo.llegada }}</strong><br>
             Salida: {{ vuelo.hora_salida }} — Llegada: {{ vuelo.hora_llegada }}<br>
-            Vuelo: {{ vuelo.numero_vuelo }}<br>
-            Avión: {{ vuelo.avion }}<br>
             Precio: {{ vuelo.precio }} €<br>
-            Duración: {{ vuelo.duracion }}<br>
+            Duración total: {{ vuelo.duracion }}<br>
             <button onclick="document.getElementById('vuelo{{ loop.index }}').style.display='block'">Más detalles</button>
             <div id="vuelo{{ loop.index }}" style="display:none; margin-top:10px">
                 <p>{{ vuelo.detalle_tarifa }}</p>
                 <p>Equipaje: {{ vuelo.equip_mano }} de mano, {{ vuelo.equip_fact }} facturado</p>
                 <p>Servicios incluidos: {{ vuelo.lista_amenities }}</p>
                 <a href="{{ vuelo.checkin_url }}" target="_blank">Check-in online</a>
+                <h4>Tramos del vuelo:</h4>
+                <ul>
+                    {% for seg in vuelo.segmentos %}
+                    <li>
+                        ✈️ {{ seg.salida }} → {{ seg.llegada }}<br>
+                        {{ seg.fecha_salida }} {{ seg.hora_salida }} — {{ seg.fecha_llegada }} {{ seg.hora_llegada }}<br>
+                        Vuelo: {{ seg.numero_vuelo }} | Avión: {{ seg.avion }}
+                    </li>
+                    {% endfor %}
+                </ul>
             </div>
         </li><br>
         {% endfor %}
