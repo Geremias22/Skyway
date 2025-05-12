@@ -1,29 +1,65 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <title>🏨 Resultados de Hoteles</title>
-    <link rel="stylesheet" href="../static/styles.css">
+  <meta charset="UTF-8">
+  <title>🏨 Hoteles en BCN</title>
+  <link rel="stylesheet" href="/static/styles.css">
 </head>
 <body>
-    <h1>🏨 Resultados de hoteles</h1>
-    <ul>
-    {% for hotel in hoteles %}
-        <li>
-            <strong>{{ hotel.nombre }}</strong><br>
-            Dirección: {{ hotel.direccion }}, {{ hotel.ciudad }}<br>
-            Estrellas: {{ hotel.estrellas }}<br>
-            Precio: {{ hotel.precio }} {{ hotel.moneda }}<br>
-            Tipo de habitación: {{ hotel.tipo_habitacion }}<br>
-            Camas: {{ hotel.camas }}<br>
-            Descripción: {{ hotel.descripcion or 'Sin descripción' }}<br>
-            <button onclick="document.getElementById('hotel{{ loop.index }}').style.display='block'">Más detalles</button>
-            <div id="hotel{{ loop.index }}" style="display:none; margin-top:10px">
-                <p>Amenities: {{ hotel.amenities | join(', ') }}</p>
-                <p>Check-in: {{ hotel.checkin }} — Check-out: {{ hotel.checkout }}</p>
-            </div>
-        </li><br>
-    {% endfor %}
-    </ul>
+  <nav style="background:#eef; padding:10px; margin-bottom:20px;">
+    ✅ {{ total_hotels }} hoteles encontrados en BCN<br>
+    ✅ Ofertas recibidas: {{ total_offers }}<br>
+    Fechas: {{ check_in }} → {{ check_out }}
+  </nav>
+
+  <ul>
+  {% for h in hoteles if h.num_offers > 0 %}
+    <li>
+      <strong>{{ h.nombre }}</strong> — Ofertas: {{ h.num_offers }}
+      <button onclick="document.getElementById('detalles{{ loop.index }}').classList.toggle('hidden')">
+        Más detalles
+      </button>
+      <div id="detalles{{ loop.index }}" class="hidden" style="margin:10px 0; padding:10px; border:1px solid #ccc;">
+        {% for o in h.offers %}
+          <h4>Oferta {{ loop.index }}</h4>
+          <p><strong>Precio:</strong> {{ o.precio }} {{ o.moneda }}</p>
+          <p><strong>Fechas:</strong> {{ o.checkin }} → {{ o.checkout }}</p>
+          <p><strong>Habitaciones:</strong> {{ o.room_quantity }}</p>
+          <p><strong>Categoría:</strong> {{ o.room_category }} ({{ o.beds }} camas)</p>
+          <p><strong>Regimen:</strong> {{ o.board_type }}, código tarifa {{ o.rate_code }}</p>
+          <p><strong>Impuestos:</strong></p>
+          <ul>
+            {% for tax in o.taxes %}
+              <li>{{ tax.code }}: {{ tax.amount or tax.percentage }} {{ tax.currency or "" }} {% if not tax.included %}(no incluido){% endif %}</li>
+            {% endfor %}
+          </ul>
+          <p><strong>Políticas de cancelación:</strong></p>
+          <ul>
+            {% for pol in o.cancellation_policies %}
+              <li>
+                {% if pol.description %}
+                  {{ pol.description.text }}
+                {% elif pol.deadline %}
+                  Hasta {{ pol.deadline }} ({{ pol.policyType }})
+                {% else %}
+                  {{ pol.policyType }}
+                {% endif %}
+              </li>
+            {% endfor %}
+          </ul>
+          <p><strong>Pago:</strong> {{ o.payment_type }}</p>
+          <p><strong>Descripción:</strong> {{ o.description }}</p>
+          <hr>
+        {% endfor %}
+      </div>
+    </li>
+  {% else %}
+    <li><em>No hay hoteles con ofertas disponibles.</em></li>
+  {% endfor %}
+</ul>
+
+<style>
+  .hidden { display: none; }
+</style>
 </body>
 </html>

@@ -23,15 +23,28 @@ def procesar_busqueda():
     print(lugar, num_personas, fecha)
 
 
-@app.route('/hoteles')
-def ruta_hoteles():
-    hoteles = buscar_hoteles()
-    return render_template('resultados_hoteles.html', hoteles=hoteles)
+# @app.route('/hoteles')
+# def ruta_hoteles():
+#     hoteles = buscar_hoteles()
+#     print("🏨 hoteles pasados al template:", hoteles)
+#     return render_template('resultados_hoteles.html', hoteles=hoteles)
 
-@app.route('/actividades')
-def ruta_actividades():
-    actividades = buscar_actividades()
-    return render_template('resultados_actividades.html', actividades=actividades)
+@app.route("/hoteles")
+def ruta_hoteles():
+    datos = buscar_hoteles(destino_code="BCN", noches=2)
+    return render_template(
+        "resultados_hoteles.html",
+        total_hotels=datos["total_hotels"],
+        total_offers=datos["total_offers"],
+        hoteles=datos["hoteles"],
+        check_in=datos["check_in"],
+        check_out=datos["check_out"]
+    )
+
+# @app.route('/actividades')
+# def ruta_actividades():
+#     actividades = buscar_actividades()
+#     return render_template('resultados_actividades.html', actividades=actividades)
     
 if __name__ == "__main__":
     app.run(debug=True)
