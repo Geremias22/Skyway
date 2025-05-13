@@ -51,6 +51,22 @@
           <p><strong>Descripción:</strong> {{ o.description }}</p>
           <hr>
         {% endfor %}
+
+        <div class="google-info">
+          {% if h.gm_address %}
+            <p><strong>Dirección exacta:</strong> {{ h.gm_address }}</p>
+          {% endif %}
+          {% if h.gm_rating %}
+            <p><strong>Valoración Google:</strong> ⭐ {{ h.gm_rating }}</p>
+          {% endif %}
+          {% if h.gm_photos %}
+            <div class="photo-gallery">
+              {% for url in h.gm_photos %}
+                <img src="{{ url }}" alt="Foto de {{ h.nombre }}" style="max-width:120px; margin:2px;">
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
       </div>
     </li>
   {% else %}
