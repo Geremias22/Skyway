@@ -96,11 +96,13 @@ def buscar_hoteles(
                 "num_offers": len(listado_ofertas),
                 "offers": detalles
             })
-        for hotel in hoteles_procesados:
-            detalles_gm = get_place_details_by_text(hotel["nombre"], destino_code)
-            hotel["gm_address"] = detalles_gm.get("address")
-            hotel["gm_rating"]  = detalles_gm.get("rating")
-            hotel["gm_photos"]  = detalles_gm.get("photos", [])
+
+        # Bucle que repasa por cada hotel para devolver la valoracion y 3 imagenes    
+        # for hotel in hoteles_procesados:
+        #     detalles_gm = get_place_details_by_text(hotel["nombre"], destino_code)
+        #     hotel["gm_address"] = detalles_gm.get("address")
+        #     hotel["gm_rating"]  = detalles_gm.get("rating")
+        #     hotel["gm_photos"]  = detalles_gm.get("photos", [])
 
         return {
             "total_hotels": total_hotels,

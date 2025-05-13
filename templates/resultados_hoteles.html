@@ -4,6 +4,11 @@
   <meta charset="UTF-8">
   <title>🏨 Hoteles en BCN</title>
   <link rel="stylesheet" href="/static/styles.css">
+  <style>
+    .hidden { display: none; }
+    .detalles { margin: 10px 0; padding: 10px; border: 1px solid #ccc; }
+    .photo-gallery img { max-width: 120px; margin: 2px; }
+  </style>
 </head>
 <body>
   <nav style="background:#eef; padding:10px; margin-bottom:20px;">
@@ -16,21 +21,29 @@
   {% for h in hoteles if h.num_offers > 0 %}
     <li>
       <strong>{{ h.nombre }}</strong> — Ofertas: {{ h.num_offers }}
-      <button onclick="document.getElementById('detalles{{ loop.index }}').classList.toggle('hidden')">
-        Más detalles
-      </button>
-      <div id="detalles{{ loop.index }}" class="hidden" style="margin:10px 0; padding:10px; border:1px solid #ccc;">
+      <button 
+        class="btn-gm" 
+        data-hotel-id="{{ h.hotelId }}" 
+        onclick="toggleDetails(this)"
+      >Más detalles</button>
+
+      <div id="detalles-{{ h.hotelId }}" class="hidden detalles">
+        {# ——— sección Amadeus ——— #}
         {% for o in h.offers %}
           <h4>Oferta {{ loop.index }}</h4>
           <p><strong>Precio:</strong> {{ o.precio }} {{ o.moneda }}</p>
           <p><strong>Fechas:</strong> {{ o.checkin }} → {{ o.checkout }}</p>
           <p><strong>Habitaciones:</strong> {{ o.room_quantity }}</p>
           <p><strong>Categoría:</strong> {{ o.room_category }} ({{ o.beds }} camas)</p>
-          <p><strong>Regimen:</strong> {{ o.board_type }}, código tarifa {{ o.rate_code }}</p>
+          <p><strong>Régimen:</strong> {{ o.board_type }}, código tarifa {{ o.rate_code }}</p>
           <p><strong>Impuestos:</strong></p>
           <ul>
             {% for tax in o.taxes %}
-              <li>{{ tax.code }}: {{ tax.amount or tax.percentage }} {{ tax.currency or "" }} {% if not tax.included %}(no incluido){% endif %}</li>
+              <li>
+                {{ tax.code }}: {{ tax.amount or tax.percentage }}
+                {{ tax.currency or "" }}
+                {% if not tax.included %}(no incluido){% endif %}
+              </li>
             {% endfor %}
           </ul>
           <p><strong>Políticas de cancelación:</strong></p>
@@ -52,30 +65,66 @@
           <hr>
         {% endfor %}
 
-        <div class="google-info">
-          {% if h.gm_address %}
-            <p><strong>Dirección exacta:</strong> {{ h.gm_address }}</p>
-          {% endif %}
-          {% if h.gm_rating %}
-            <p><strong>Valoración Google:</strong> ⭐ {{ h.gm_rating }}</p>
-          {% endif %}
-          {% if h.gm_photos %}
-            <div class="photo-gallery">
-              {% for url in h.gm_photos %}
-                <img src="{{ url }}" alt="Foto de {{ h.nombre }}" style="max-width:120px; margin:2px;">
-              {% endfor %}
-            </div>
-          {% endif %}
+        {# ——— sección Google Places ——— #}
+        <div class="google-info" id="gm-{{ h.hotelId }}">
+          <p>Cargando info de Google…</p>
         </div>
       </div>
     </li>
   {% else %}
     <li><em>No hay hoteles con ofertas disponibles.</em></li>
   {% endfor %}
-</ul>
+  </ul>
 
-<style>
-  .hidden { display: none; }
-</style>
+  <script>
+  function toggleDetails(btn) {
+    const hotelId = btn.dataset.hotelId;
+    const cont = document.getElementById('detalles-' + hotelId);
+    cont.classList.toggle('hidden');
+
+    const gmDiv = document.getElementById('gm-' + hotelId);
+    // Si ya hemos cargado la info, no volvemos a pedirla
+    if (gmDiv.dataset.loaded) return;
+
+    fetch(`/hotel/${hotelId}/gm-info`)
+      .then(r => {
+        if (r.status === 204) throw 'No data';
+        if (!r.ok)    throw 'Error';
+        return r.json();
+      })
+      .then(data => {
+        gmDiv.dataset.loaded = '1';
+        gmDiv.innerHTML = '';
+
+        if (data.address) {
+          const p = document.createElement('p');
+          p.innerHTML = `<strong>Dirección exacta:</strong> ${data.address}`;
+          gmDiv.appendChild(p);
+        }
+        if (data.rating) {
+          const p = document.createElement('p');
+          p.innerHTML = `<strong>Valoración Google:</strong> ⭐ ${data.rating}`;
+          gmDiv.appendChild(p);
+        }
+        if (data.photos && data.photos.length) {
+          const gallery = document.createElement('div');
+          gallery.classList.add('photo-gallery');
+          data.photos.forEach(u => {
+            const img = document.createElement('img');
+            img.src = u;
+            img.alt = `Foto de ${btn.previousElementSibling.textContent}`;
+            gallery.appendChild(img);
+          });
+          gmDiv.appendChild(gallery);
+        }
+        if (!data.address && !data.rating && (!data.photos || !data.photos.length)) {
+          gmDiv.innerHTML = '<em>No hay datos de Google disponibles.</em>';
+        }
+      })
+      .catch(_ => {
+        gmDiv.innerHTML = '<em>Error al cargar info de Google.</em>';
+      });
+  }
+  </script>
 </body>
 </html>

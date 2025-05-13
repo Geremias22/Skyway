@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>🎡 Actividades en {{ ciudad }}</title>
+  <link rel="stylesheet" href="/static/styles.css">
+  <style>
+    .card { border:1px solid #ccc; padding:10px; margin:10px 0; display:flex; }
+    .card img { max-width:120px; margin-right:10px; }
+    .card-content { flex:1; }
+  </style>
+</head>
+<body>
+  <h1>🎡 Actividades alrededor de {{ ciudad }}</h1>
+
+  {% if actividades %}
+    {% for a in actividades %}
+      <div class="card">
+        {% if a.imagen %}
+          <img src="{{ a.imagen }}" alt="Imagen {{ a.nombre }}">
+        {% endif %}
+        <div class="card-content">
+          <h3>{{ a.nombre }}</h3>
+          <p><strong>Categoría:</strong> {{ a.categoria or '—' }}</p>
+          <p><strong>Duración:</strong> {{ a.duracion or '—' }}</p>
+          <p><strong>Precio:</strong> {{ a.precio or '—' }} {{ a.moneda or '' }}</p>
+          <p>{{ a.descripcion or 'Sin descripción disponible.' }}</p>
+        </div>
+      </div>
+    {% endfor %}
+  {% else %}
+    <p><em>No se han encontrado actividades en los alrededores.</em></p>
+  {% endif %}
+</body>
+</html>
+    

@@ -1,7 +1,8 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, jsonify
 from controllers.generador_vuelos import buscar_vuelos
 from controllers.generador_hoteles import buscar_hoteles
-print("✅ buscar_hoteles importado correctamente")
+from controllers.google_places import get_place_details_by_text
+from controllers.generador_actividades import buscar_actividades
 
 app = Flask(__name__)
 
@@ -29,6 +30,19 @@ def procesar_busqueda():
 #     print("🏨 hoteles pasados al template:", hoteles)
 #     return render_template('resultados_hoteles.html', hoteles=hoteles)
 
+@app.route("/hotel/<hotel_id>/gm-info")
+def ruta_gm_info(hotel_id):
+    datos = buscar_hoteles(destino_code="BCN", noches=2)
+    hotel = next((h for h in datos["hoteles"] if h["hotelId"] == hotel_id), None)
+    if not hotel:
+        return jsonify({"error": "Hotel no encontrado"}), 404
+
+    # Directamente Text Search + Details
+    detalles = get_place_details_by_text(hotel["nombre"], "Barcelona")
+    if not detalles:
+        return ("", 204)
+    return jsonify(detalles)
+
 @app.route("/hoteles")
 def ruta_hoteles():
     datos = buscar_hoteles(destino_code="BCN", noches=2)
@@ -45,6 +59,17 @@ def ruta_hoteles():
 # def ruta_actividades():
 #     actividades = buscar_actividades()
 #     return render_template('resultados_actividades.html', actividades=actividades)
+
+@app.route("/actividades")
+def ruta_actividades():
+    # Para BCN usamos coordenadas aproximadas del centro
+    lat_bc, lon_bc = 41.3851, 2.1734
+    actividades = buscar_actividades(lat_bc, lon_bc, radius_km=5)
+    return render_template(
+        "resultados_actividades.html",
+        actividades=actividades,
+        ciudad="Barcelona"
+    )
     
 if __name__ == "__main__":
     app.run(debug=True)
