@@ -1,0 +1,25 @@
+{% extends "layout.html" %}
+
+{% block title %}Inicio - Skyway{% endblock %}
+
+{% block content %}
+    <div class="modal">
+        <h2>¿Empezamos a preparar el viaje?</h2>
+        <div class="options">
+            <div class="option">
+                <div class="text-container">
+                    <h3>Sabes a dónde ir</h3>
+                    <p>Selecciona un aeropuerto en la página de búsqueda</p>
+                </div>
+                <a href="/buscar"><button>Buscar</button></a>
+            </div>
+            <div class="option">
+                <div class="text-container">
+                    <h3>No sabes a dónde ir</h3>
+                    <p>Descubre a dónde te puede llevar tu presupuesto.</p>
+                </div>
+                <a href="/explorar"><button>Explorar</button></a>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -3,32 +3,70 @@ from controllers.generador_vuelos import buscar_vuelos
 from controllers.generador_hoteles import buscar_hoteles
 from controllers.google_places import get_place_details_by_text
 from controllers.generador_actividades import buscar_actividades
+from controllers.dashboard_generator import generar_dashboard_completo
+
 
 app = Flask(__name__)
 
 @app.route("/")
 def inicio():
-    return "<h1>Bienvenido a Skyway ✈️</h1><p>Visita <a href='/vuelos'>/vuelos</a> para ver resultados.</p>"
+    return render_template("inicio.html")
+
 
 @app.route("/vuelos")
 def mostrar_vuelos():
-    vuelos = buscar_vuelos()  # Esta función ya prepara y devuelve los vuelos procesados
-    return render_template("resultados_vuelos.html", vuelos=vuelos, origen=vuelos[0]["salida"], destino=vuelos[0]["llegada"])
+    vuelos = buscar_vuelos(
+        origen="MAD",
+        destino="BCN",
+        fecha="2025-06-01"
+    )
+    return render_template(
+        "resultados_vuelos.html",
+        vuelos=vuelos,
+        origen="MAD",
+        destino="BCN"
+    )
+    # return render_template("resultados_vuelos.html", vuelos=vuelos, origen=vuelos[0]["salida"], destino=vuelos[0]["llegada"])
 
-@app.route('/buscar', methods=['POST'])
-def procesar_busqueda():
-    # Obtener los datos del formulario
-    lugar = request.form.get('location')
-    num_personas = request.form.get('days')
-    fecha = request.form.get('date')
-    print(lugar, num_personas, fecha)
+@app.route('/buscar', methods=['GET', 'POST'])
+def procesar_busqueda_con_destino():
+    if request.method == 'POST':
+        # Procesar formulario
+        location = request.form.get('location')
+        personas = request.form.get('days')
+        fecha = request.form.get('date')
+
+        # Aquí puedes hacer validaciones, generar datos, etc.
+        return redirect(url_for('mostrar_dashboard', 
+                                origen=location, 
+                                destino="LEN",  # esto lo puedes ajustar luego
+                                dias=personas, 
+                                fecha=fecha,
+                                personas=personas))
+    else:
+        # Mostrar el formulario
+        return render_template("buscar.html")
 
 
-# @app.route('/hoteles')
-# def ruta_hoteles():
-#     hoteles = buscar_hoteles()
-#     print("🏨 hoteles pasados al template:", hoteles)
-#     return render_template('resultados_hoteles.html', hoteles=hoteles)
+@app.route('/explorar', methods=['GET', 'POST'])
+def procesar_busqueda_sin_destino():
+    if request.method == 'POST':
+        # Procesar formulario
+        location = request.form.get('location')
+        personas = request.form.get('days')
+        fecha = request.form.get('date')
+
+        # Aquí puedes hacer validaciones, generar datos, etc.
+        return redirect(url_for('mostrar_dashboard', 
+                                origen=location, 
+                                destino="LEN",  # esto lo puedes ajustar luego
+                                dias=personas, 
+                                fecha=fecha,
+                                personas=personas))
+    else:
+        # Mostrar el formulario
+        return render_template("explorar.html")
+
 
 @app.route("/hotel/<hotel_id>/gm-info")
 def ruta_gm_info(hotel_id):
@@ -70,6 +108,19 @@ def ruta_actividades():
         actividades=actividades,
         ciudad="Barcelona"
     )
+
+
+@app.route("/dashboard")
+def mostrar_dashboard():
+    # ⚠️ Puedes hacerlo dinámico leyendo de query params o base de datos
+    datos = generar_dashboard_completo(
+        origen="BCN",
+        destino="LEN",
+        dias="4",  
+        fecha="2025-08-18",
+        personas="2"
+    )
+    return render_template("dashboard.html", **datos)
     
 if __name__ == "__main__":
     app.run(debug=True)

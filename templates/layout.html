@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/css/inicio.css">
+    {% block favicon %}
+        <link rel="icon" type="image/png" href="/static/img/LogoSkyway2.png">
+    {% endblock %}
+    <title>{% block title %}Skyway{% endblock %}</title>
+</head>
+<body>
+    
+    <header>
+        <div class="menu">
+            <div class="menu-left">
+                <a 
+                href="/"
+                class="btn">
+                    Skyway
+                </a>
+            </div>
+            <div class="menu-right">
+                <a href="#"><img src="/static/img/icono-mundo.png" alt="Idioma" class="icono-mundo btn"></a>
+                <a href="#" class="btn">Ver mis viajes</a>
+                <a href="#"><img src="/static/img/inicio-sesion.png" alt="Idioma" class="icono-mundo btn">Iniciar Sesión</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+   
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-col">
+                <h3>Skyway</h3>
+                <p>Planifica tus viajes de forma inteligente con ayuda de IA. Encuentra vuelos, hoteles, experiencias y mucho más.</p>
+            </div>
+            <div class="footer-col">
+                <h4>Enlaces útiles</h4>
+                <ul>
+                    <li><a href="/buscar">Buscar destinos</a></li>
+                    <li><a href="/explorar">Explorar por presupuesto</a></li>
+                    <li><a href="/dashboard">Ver recomendaciones</a></li>
+                    <li><a href="#">Ver mis viajes</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Contacto</h4>
+                <ul>
+                    <li><a href="mailto:soporte@skyway.ai">soporte@skyway.ai</a></li>
+                    <li><a href="#">Términos y condiciones</a></li>
+                    <li><a href="#">Política de privacidad</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 Skyway. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+</body>
+</html>

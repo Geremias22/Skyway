@@ -1,6 +1,5 @@
 import os
 from dotenv import load_dotenv
-import google.generativeai as genai
 from services.generador import (
     # generar_destinos_sin_direccion,
     generar_itinerario_con_direccion,

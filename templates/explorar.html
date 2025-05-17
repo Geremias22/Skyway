@@ -1,22 +1,8 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../skyway.css">
-    <title>Skyway</title>
-</head>
-<body>
-    <header>
-        <div class="menu">
-            <div class="menu-left">SkyWay</div>
-            <div class="menu-right">
-                <a href="#"><img src="../imagenes/icono-mundo.png" alt="Idioma" class="icono-mundo"></a>
-                <a href="#">Ver mis viajes</a>
-                <a href="#"><img src="../imagenes/inicio-sesion.png" alt="Idioma" class="icono-mundo">Iniciar Sesión</a>
-            </div>
-        </div>
-    </header>
+{% extends "layout.html" %}
+
+{% block title %}Inicio - Skyway{% endblock %}
+
+{% block content %}
     <div class="search-container">
         <h1>Planea tu proximo viaje con una sencilla búsqueda.</h1>
         <form class="search-form">
@@ -39,5 +25,4 @@
             <button type="submit">Buscar</button>
         </form>
     </div>
-</body>
-</html> 
+{% endblock %}

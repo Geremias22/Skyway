@@ -106,18 +106,22 @@ def formatear_duracion(iso_duration):
 #     buscar_vuelos()
 
 
-def buscar_vuelos():
+def buscar_vuelos(origen: str, destino: str, fecha: str, adultos: int = 1, guardar: bool = False):
     try:
         respuesta = amadeus.shopping.flight_offers_search.get(
-            originLocationCode="MAD",
-            destinationLocationCode="FRA",
-            departureDate="2025-08-18",
-            adults=5
+            originLocationCode=origen,
+            destinationLocationCode=destino,
+            departureDate=fecha,
+            adults=adultos
         )
         vuelos = respuesta.data[:10]
         print(f"✈️ Se encontraron {len(vuelos)} vuelos.")
-        guardar_resultados(vuelos)  # sigue guardando si quieres
-        return procesar_vuelos(vuelos)  # nueva función que devuelve lista procesada
+        
+        if guardar:
+            guardar_resultados(vuelos)
+        
+        return procesar_vuelos(vuelos)
+    
     except ResponseError as error:
         print("❌ Error al buscar vuelos:", error)
         return []
