@@ -147,17 +147,31 @@ def procesar_vuelos(flights):
             segmentos.append(segmento)
 
         traveler = vuelo['travelerPricings'][0]
-        clase = traveler['fareDetailsBySegment'][0]['class']
-        tarifa = traveler['fareDetailsBySegment'][0].get('brandedFareLabel', 'N/A')
+        # clase = traveler['fareDetailsBySegment'][0]['class']
+        # tarifa = traveler['fareDetailsBySegment'][0].get('brandedFareLabel', 'N/A')
+        # detalle_tarifa = formatear_tarifa_clase(
+        #     traveler['fareDetailsBySegment'][0]['cabin'],
+        #     tarifa,
+        #     clase
+        # )
+        # equip_mano = traveler['fareDetailsBySegment'][0]['includedCabinBags'].get('quantity', 0)
+        # equip_fact = traveler['fareDetailsBySegment'][0]['includedCheckedBags'].get('quantity', 0)
+        # amenities = traveler['fareDetailsBySegment'][0].get('amenities', [])
+        # lista_amenities = ', '.join(a['description'] for a in amenities if not a['isChargeable']) or 'Ninguna incluida'
+        fare_details = traveler.get('fareDetailsBySegment', [{}])[0]
+        clase = fare_details.get('class', 'N/A')
+        tarifa = fare_details.get('brandedFareLabel', 'N/A')
         detalle_tarifa = formatear_tarifa_clase(
-            traveler['fareDetailsBySegment'][0]['cabin'],
+            fare_details.get('cabin', 'N/A'),
             tarifa,
             clase
         )
-        equip_mano = traveler['fareDetailsBySegment'][0]['includedCabinBags'].get('quantity', 0)
-        equip_fact = traveler['fareDetailsBySegment'][0]['includedCheckedBags'].get('quantity', 0)
-        amenities = traveler['fareDetailsBySegment'][0].get('amenities', [])
-        lista_amenities = ', '.join(a['description'] for a in amenities if not a['isChargeable']) or 'Ninguna incluida'
+        equip_mano = fare_details.get('includedCabinBags', {}).get('quantity', 0)
+        equip_fact = fare_details.get('includedCheckedBags', {}).get('quantity', 0)
+        amenities = fare_details.get('amenities', [])
+        lista_amenities = ', '.join(
+            a.get('description', '') for a in amenities if not a.get('isChargeable', True)
+        ) or 'Ninguna incluida'
 
         checkin_url = CHECKIN_LINKS.get(segmentos[0]["aerolinea"], "#")
 

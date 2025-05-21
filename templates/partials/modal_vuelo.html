@@ -1,0 +1,58 @@
+<!-- modal_vuelo.html -->
+ <style>
+/* ... tus estilos existentes ... */
+
+.modal-vuelo {
+    position: fixed;
+    z-index: 9999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+.modal-contenido {
+    background-color: #222;
+    color: #fff;
+    margin: 5% auto;
+    padding: 20px;
+    border-radius: 10px;
+    width: 80%;
+    max-width: 600px;
+    box-shadow: 0 0 10px #000;
+    position: relative;
+}
+
+.cerrar {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 24px;
+    font-weight: bold;
+    color: #fff;
+    cursor: pointer;
+}
+</style>
+
+<div id="modalVuelo{{ loop.index }}" class="modal-vuelo" style="display:none;">
+    <div class="modal-contenido">
+        <span class="cerrar" onclick="cerrarModal('modalVuelo{{ loop.index }}')">&times;</span>
+        <h3>Detalles del vuelo {{ vuelo.salida }} → {{ vuelo.llegada }}</h3>
+        <p>{{ vuelo.detalle_tarifa }}</p>
+        <p>Equipaje: {{ vuelo.equip_mano }} de mano, {{ vuelo.equip_fact }} facturado</p>
+        <p>Servicios incluidos: {{ vuelo.lista_amenities }}</p>
+        <a href="{{ vuelo.checkin_url }}" target="_blank">Check-in online</a>
+        <h4>Tramos del vuelo:</h4>
+        <ul>
+            {% for seg in vuelo.segmentos %}
+                <li>
+                    ✈️ {{ seg.salida }} → {{ seg.llegada }}<br>
+                    {{ seg.fecha_salida }} {{ seg.hora_salida }} — {{ seg.fecha_llegada }} {{ seg.hora_llegada }}<br>
+                    Vuelo: {{ seg.numero_vuelo }} | Avión: {{ seg.avion }}
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>

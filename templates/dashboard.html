@@ -1,20 +1,18 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Skyway | Dashboard</title>
-    <style>
-        body { background: #0c0c0c; color: #e0e0e0; font-family: Arial, sans-serif; margin: 0; padding: 20px; }
-        .contenedor { display: flex; flex-direction: row; gap: 20px; }
-        .izquierda { flex: 2; padding: 10px; background: #1e1e1e; border-radius: 10px; max-width: 900px; }
-        .derecha { flex: 1; display: flex; flex-direction: column; gap: 20px; }
-        .box { background: #222; padding: 15px; border-radius: 10px; }
-        h1, h2 { color: #5ecfff; }
-        hr { border: 0; border-top: 1px solid #555; }
-    </style>
-</head>
-<body>
-    <h1 style="text-align: center;">skyway</h1>
+
+{% extends "layout.html" %}
+
+{% block title %}Inicio - Skyway{% endblock %}
+
+{% block content %}
+<style>
+    body { background: #0c0c0c; color: #e0e0e0; font-family: Arial, sans-serif; margin: 0; padding: 20px; }
+    .contenedor { display: flex; flex-direction: row; gap: 20px; }
+    .izquierda { flex: 2; padding: 10px; background: #1e1e1e; border-radius: 10px; max-width: 900px; }
+    .derecha { flex: 1; display: flex; flex-direction: column; gap: 20px; }
+    .box { background: #222; padding: 15px; border-radius: 10px; }
+    h1, h2 { color: #5ecfff; }
+    hr { border: 0; border-top: 1px solid #555; }
+</style>
     <div class="contenedor">
         <div class="izquierda">
             <h2>📝 Itinerario</h2>
@@ -28,6 +26,9 @@
                     {{ vuelo.fecha_salida }} {{ vuelo.hora_salida }} - {{ vuelo.hora_llegada }}<br>
                     Precio: {{ vuelo.precio }}€<br>
                     {{ vuelo.detalle_tarifa }}</p>
+                    <button onclick="abrirModal('modalVuelo{{ loop.index }}')">Ver detalles</button>
+
+                    {% include 'partials/modal_vuelo.html' %}
                     <hr>
                 {% endfor %}
             </div>
@@ -49,5 +50,15 @@
             </div>
         </div>
     </div>
-</body>
-</html>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function abrirModal(id) {
+        document.getElementById(id).style.display = 'block';
+    }
+    function cerrarModal(id) {
+        document.getElementById(id).style.display = 'none';
+    }
+</script>
+{% endblock %}

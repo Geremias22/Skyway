@@ -1,12 +1,18 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, redirect, url_for
+# from flask import Flask, render_template, request, jsonify
 from controllers.generador_vuelos import buscar_vuelos
 from controllers.generador_hoteles import buscar_hoteles
 from controllers.google_places import get_place_details_by_text
 from controllers.generador_actividades import buscar_actividades
 from controllers.dashboard_generator import generar_dashboard_completo
+from db import db  # asumiendo que tienes una conexión MongoDB
+from werkzeug.security import generate_password_hash, check_password_hash
+from flask import request, redirect, url_for, session, flash
+import os
 
 
 app = Flask(__name__)
+app.secret_key = os.getenv("SECRET_KEY")
 
 @app.route("/")
 def inicio():
@@ -31,20 +37,25 @@ def mostrar_vuelos():
 @app.route('/buscar', methods=['GET', 'POST'])
 def procesar_busqueda_con_destino():
     if request.method == 'POST':
-        # Procesar formulario
-        location = request.form.get('location')
-        personas = request.form.get('days')
-        fecha = request.form.get('date')
+        # Nombres correctos desde el formulario
+        origen = request.form.get('origen')
+        destino = request.form.get('destino')
+        fecha = request.form.get('fecha')
+        dias = request.form.get('dias')
+        personas = request.form.get('personas')
 
-        # Aquí puedes hacer validaciones, generar datos, etc.
+        if not all([origen, destino, fecha, dias, personas]):
+            return "Faltan datos en el formulario", 400
+
+        print("DEBUG:", origen, destino, fecha, dias, personas)
+
         return redirect(url_for('mostrar_dashboard', 
-                                origen=location, 
-                                destino="LEN",  # esto lo puedes ajustar luego
-                                dias=personas, 
+                                origen=origen, 
+                                destino=destino, 
+                                dias=dias, 
                                 fecha=fecha,
                                 personas=personas))
     else:
-        # Mostrar el formulario
         return render_template("buscar.html")
 
 
@@ -67,6 +78,46 @@ def procesar_busqueda_sin_destino():
         # Mostrar el formulario
         return render_template("explorar.html")
 
+
+
+@app.route("/login", methods=["POST"])
+def login():
+    email = request.form.get("email")
+    password = request.form.get("password")
+    user = db.usuarios.find_one({"email": email})
+    if user and check_password_hash(user["password"], password):
+        session["username"] = user["username"]
+        flash("Sesión iniciada correctamente.")
+        return redirect(url_for("inicio"))
+    else:
+        flash("Correo o contraseña incorrectos.")
+        return redirect(url_for("inicio"))
+
+@app.route("/register", methods=["POST"])
+def register():
+    email = request.form.get("email")
+    username = request.form.get("username")
+    password = request.form.get("password")
+    confirm = request.form.get("confirm")
+
+    if password != confirm:
+        flash("Las contraseñas no coinciden.")
+        return redirect(url_for("inicio"))
+
+    if db.usuarios.find_one({"email": email}):
+        flash("El correo ya está registrado.")
+        return redirect(url_for("inicio"))
+
+    pw_hash = generate_password_hash(password)
+    db.usuarios.insert_one({
+        "username": username,
+        "email": email,
+        "password": pw_hash
+    })
+    session["username"] = username
+    flash("Registro exitoso.")
+    return redirect(url_for("inicio"))
+# --------------------------------------------------------------------------------------
 
 @app.route("/hotel/<hotel_id>/gm-info")
 def ruta_gm_info(hotel_id):
@@ -110,15 +161,33 @@ def ruta_actividades():
     )
 
 
+# @app.route("/dashboard")
+# def mostrar_dashboard():
+#     # ⚠️ Puedes hacerlo dinámico leyendo de query params o base de datos
+#     datos = generar_dashboard_completo(
+#         origen="BCN",
+#         destino="LEN",
+#         dias="4",  
+#         fecha="2025-08-18",
+#         personas="2"
+#     )
+#     return render_template("dashboard.html", **datos)
+
+
 @app.route("/dashboard")
 def mostrar_dashboard():
-    # ⚠️ Puedes hacerlo dinámico leyendo de query params o base de datos
+    origen = request.args.get('origen')
+    destino = request.args.get('destino')
+    dias = request.args.get('dias')
+    fecha = request.args.get('fecha')
+    personas = request.args.get('personas')
+
     datos = generar_dashboard_completo(
-        origen="BCN",
-        destino="LEN",
-        dias="4",  
-        fecha="2025-08-18",
-        personas="2"
+        origen=origen,
+        destino=destino,
+        dias=dias,
+        fecha=fecha,
+        personas=personas
     )
     return render_template("dashboard.html", **datos)
     

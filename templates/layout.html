@@ -23,7 +23,7 @@
             <div class="menu-right">
                 <a href="#"><img src="/static/img/icono-mundo.png" alt="Idioma" class="icono-mundo btn"></a>
                 <a href="#" class="btn">Ver mis viajes</a>
-                <a href="#"><img src="/static/img/inicio-sesion.png" alt="Idioma" class="icono-mundo btn">Iniciar Sesión</a>
+                <a href="#" onclick="abrirModal('modalAuth')"><img src="/static/img/inicio-sesion.png" alt="Idioma" class="icono-mundo btn">Iniciar Sesión</a>
             </div>
         </div>
     </header>
@@ -62,5 +62,25 @@
         </div>
     </footer>
 
+    {% include "partials/modal_auth.html" %}
+
+    {% block scripts %}
+    <script>
+        function abrirModal(id) {
+            document.getElementById(id).style.display = 'block';
+        }
+        function cerrarModal(id) {
+            document.getElementById(id).style.display = 'none';
+        }
+        function mostrarRegistro() {
+            document.getElementById('form-login').style.display = 'none';
+            document.getElementById('form-register').style.display = 'block';
+        }
+        function mostrarLogin() {
+            document.getElementById('form-register').style.display = 'none';
+            document.getElementById('form-login').style.display = 'block';
+        }
+    </script>
+    {% endblock %}
 </body>
 </html>
